@@ -1,6 +1,7 @@
 var initMongo = require("../server/init-mongo.js");
 var users = initMongo.db.collection("users");
 var ObjectID = require("mongoskin").ObjectID;
+var _ = require("lodash");
 var bcrypt = require("bcrypt");
 
 module.exports = User;
@@ -10,6 +11,18 @@ function User (opt) {
   this.password = opt.password;
   this.updatedAt = new Date();
   this.createdAt = new Date();
+}
+
+User.findById = function (id, fn) {
+  users.findOne({_id: new ObjectID(id)}, function (err, record) {
+    if (err) {
+      return fn(err);
+    }
+
+    if (record) {
+      fn (null, _.extend(record, User.prototype));
+    }
+  });
 }
 
 User.prototype.register = function (fn) {
