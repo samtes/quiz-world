@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon lib/app.js",
-    "test": "mocha --recursive"
+    "test": "gulp mocha",
+    "start": "nodemon lib/app.js"
   },
   "dependencies": {
     "bcrypt": "^0.8.5",
@@ -20,11 +20,16 @@
     "mongoskin": "^1.4.13",
     "morgan": "~1.6.1",
     "nodemon": "^1.8.1",
+    "redis-url": "^1.2.1",
     "serve-favicon": "~2.3.0"
   },
   "devDependencies": {
     "chai": "^3.4.1",
     "expect.js": "^0.3.1",
+    "gulp": "^3.9.0",
+    "gulp-exit": "0.0.2",
+    "gulp-mocha": "^2.2.0",
+    "gulp-util": "^3.0.7",
     "mocha": "^2.3.4",
     "superagent": "^1.6.1",
     "supertest": "^1.1.0"

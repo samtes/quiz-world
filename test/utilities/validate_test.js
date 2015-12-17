@@ -1,7 +1,7 @@
 var expect = require("chai").expect;
 var validate;
 
-describe("Validate user utilities",  function () {
+describe("Validate",  function () {
   before(function (done) {
     validate = require("../../lib/utilities/validate");
     done();

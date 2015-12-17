@@ -1,7 +1,7 @@
 var expect = require("chai").expect;
 var error;
 
-describe("Error utilities",  function () {
+describe("Error",  function () {
   before(function (done) {
     error = require("../../lib/utilities/error");
     done();

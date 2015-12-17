@@ -44,12 +44,12 @@ describe("users route", function(){
       })
       .end(function (err, res) {
         token = res.body.token;
-        cookie = res.headers['set-cookie'];
+        cookie = res.headers["set-cookie"];
         expect(res.status).to.equal(200);
 
         request(app)
-        .get('/users')
-        .set('cookie', cookie)
+        .get("/users")
+        .set("cookie", cookie)
         .set("session-id", token)
         .expect(200, done);
       });
@@ -57,7 +57,7 @@ describe("users route", function(){
   });
 
   describe("GET /users/:id", function () {
-    it("should return all users", function (done) {
+    it("should return user", function (done) {
       request(app)
       .post("/login")
       .send({
@@ -68,12 +68,12 @@ describe("users route", function(){
       .end(function (err, res) {
         id = res.body.userID;
         token = res.body.token;
-        cookie = res.headers['set-cookie'];
+        cookie = res.headers["set-cookie"];
         expect(res.status).to.equal(200);
 
         request(app)
-        .get('/users/'.concat(id))
-        .set('cookie', cookie)
+        .get("/users/".concat(id))
+        .set("cookie", cookie)
         .set("session-id", token)
         .expect(200, done);
       });
@@ -90,12 +90,12 @@ describe("users route", function(){
       .end(function (err, res) {
         id = res.body.userID;
         token = res.body.token;
-        cookie = res.headers['set-cookie'];
+        cookie = res.headers["set-cookie"];
         expect(res.status).to.equal(200);
 
         request(app)
-        .get('/users/'.concat("123412341234"))
-        .set('cookie', cookie)
+        .get("/users/".concat("123412341234"))
+        .set("cookie", cookie)
         .set("session-id", token)
         .expect(404, done);
       });
@@ -114,12 +114,12 @@ describe("users route", function(){
       .end(function (err, res) {
         id = res.body.userID;
         token = res.body.token;
-        cookie = res.headers['set-cookie'];
+        cookie = res.headers["set-cookie"];
         expect(res.status).to.equal(200);
 
         request(app)
-        .put('/users/'.concat(id))
-        .set('cookie', cookie)
+        .put("/users/".concat(id))
+        .set("cookie", cookie)
         .set("session-id", token)
         .send({"email": "foof@test.com"})
         .end(function (err, res) {
@@ -141,12 +141,12 @@ describe("users route", function(){
       .end(function (err, res) {
         id = res.body.userID;
         token = res.body.token;
-        cookie = res.headers['set-cookie'];
+        cookie = res.headers["set-cookie"];
         expect(res.status).to.equal(200);
 
         request(app)
-        .put('/users/'.concat(id))
-        .set('cookie', cookie)
+        .put("/users/".concat(id))
+        .set("cookie", cookie)
         .set("session-id", token)
         .send({"email": "zoo@test.com"})
         .end(function (err, res) {
@@ -168,12 +168,12 @@ describe("users route", function(){
       .end(function (err, res) {
         id = res.body.userID;
         token = res.body.token;
-        cookie = res.headers['set-cookie'];
+        cookie = res.headers["set-cookie"];
         expect(res.status).to.equal(200);
 
         request(app)
-        .put('/users/'.concat(id))
-        .set('cookie', cookie)
+        .put("/users/".concat(id))
+        .set("cookie", cookie)
         .set("session-id", token)
         .send({"email": "zootest.com"})
         .end(function (err, res) {
@@ -195,12 +195,12 @@ describe("users route", function(){
       .end(function (err, res) {
         id = res.body.userID;
         token = res.body.token;
-        cookie = res.headers['set-cookie'];
+        cookie = res.headers["set-cookie"];
         expect(res.status).to.equal(200);
 
         request(app)
-        .put('/users/'.concat(id))
-        .set('cookie', cookie)
+        .put("/users/".concat(id))
+        .set("cookie", cookie)
         .set("session-id", token)
         .send({"email": "zoo@testcom"})
         .end(function (err, res) {
@@ -222,12 +222,12 @@ describe("users route", function(){
       .end(function (err, res) {
         id = res.body.userID;
         token = res.body.token;
-        cookie = res.headers['set-cookie'];
+        cookie = res.headers["set-cookie"];
         expect(res.status).to.equal(200);
 
         request(app)
-        .put('/users/'.concat(id))
-        .set('cookie', cookie)
+        .put("/users/".concat(id))
+        .set("cookie", cookie)
         .set("session-id", token)
         .send({"password": "password1"})
         .end(function (err, res) {
@@ -249,12 +249,12 @@ describe("users route", function(){
       .end(function (err, res) {
         id = res.body.userID;
         token = res.body.token;
-        cookie = res.headers['set-cookie'];
+        cookie = res.headers["set-cookie"];
         expect(res.status).to.equal(200);
 
         request(app)
-        .put('/users/'.concat(id))
-        .set('cookie', cookie)
+        .put("/users/".concat(id))
+        .set("cookie", cookie)
         .set("session-id", token)
         .end(function (err, res) {
           expect(res.status).to.equal(400);
