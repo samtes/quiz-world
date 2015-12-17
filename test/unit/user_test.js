@@ -2,7 +2,7 @@ process.env.DBNAME = "quiz-world-test";
 var expect = require("chai").expect;
 var User, initMongo;
 
-describe("User",  function () {
+describe("User model methods",  function () {
   before(function (done) {
     User = require("../../lib/models/user");
     initMongo = require("../../lib/server/init-mongo");
