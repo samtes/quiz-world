@@ -8,7 +8,7 @@ var expect = require("chai").expect;
 var User, initMongo;
 var cookie;
 
-describe("Users route", function(){
+describe("Register route", function(){
   before(function (done) {
     User = require("../../lib/models/user");
     initMongo = require("../../lib/server/init-mongo");
@@ -19,7 +19,7 @@ describe("Users route", function(){
     initMongo.db.collection("users").drop();
 
     new User({
-      email: "sam@test.com",
+      email: "sami@test.com",
       password: "Password1"
     }).register(function (err, user) {
       expect(user._id.toString()).to.have.length(24);
@@ -32,7 +32,7 @@ describe("Users route", function(){
       request(app)
       .post("/register")
       .send({
-        "email": "bob@test.com",
+        "email": "bobby@test.com",
         "password": "Password1",
         "confirmPassword": "Password1"
       })
@@ -70,7 +70,7 @@ describe("Users route", function(){
       request(app)
       .post("/register")
       .send({
-        "email": "bob@test.com",
+        "email": "bobby@test.com",
         "confirmPassword": "Password1"
       })
       .end(function (err, res) {
@@ -84,7 +84,7 @@ describe("Users route", function(){
       request(app)
       .post("/register")
       .send({
-        "email": "bob@test.com",
+        "email": "bobby@test.com",
         "password": "Password1"
       })
       .end(function (err, res) {
@@ -98,7 +98,7 @@ describe("Users route", function(){
       request(app)
       .post("/register")
       .send({
-        "email": "sam@test.com",
+        "email": "sami@test.com",
         "password": "Password1",
         "confirmPassword": "Password1"
       })
@@ -113,7 +113,7 @@ describe("Users route", function(){
       request(app)
       .post("/register")
       .send({
-        "email": "bob@test.com",
+        "email": "bobby@test.com",
         "password": "Password",
         "confirmPassword": "Password"
       })
@@ -128,7 +128,7 @@ describe("Users route", function(){
       request(app)
       .post("/register")
       .send({
-        "email": "bob@test.com",
+        "email": "bobby@test.com",
         "password": "password1",
         "confirmPassword": "password1"
       })
@@ -143,7 +143,7 @@ describe("Users route", function(){
       request(app)
       .post("/register")
       .send({
-        "email": "bob@test.com",
+        "email": "bobby@test.com",
         "password": "PASSWORD1",
         "confirmPassword": "PASSWORD1"
       })
@@ -158,7 +158,7 @@ describe("Users route", function(){
       request(app)
       .post("/register")
       .send({
-        "email": "bob@test.com",
+        "email": "bobby@test.com",
         "password": "Password1",
         "confirmPassword": "Password"
       })
@@ -173,7 +173,7 @@ describe("Users route", function(){
       request(app)
       .post("/register")
       .send({
-        "email": "bobtest.com",
+        "email": "bobbytest.com",
         "password": "Password1",
         "confirmPassword": "Password1"
       })
@@ -188,7 +188,7 @@ describe("Users route", function(){
       request(app)
       .post("/register")
       .send({
-        "email": "bobtest.com",
+        "email": "bobbytest.com",
         "password": "Password1",
         "confirmPassword": "Password1"
       })
