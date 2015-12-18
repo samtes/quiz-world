@@ -33,6 +33,19 @@ describe("User",  function () {
         password: "password"
       }).register(function (err, user) {
         expect(user._id.toString()).to.have.length(24);
+        expect(user.role).to.be.eql("user");
+        done();
+      });
+    });
+
+    it("registers admin", function (done) {
+      new User({
+        email: "sam@test.com",
+        password: "password",
+        role: "admin"
+      }).register(function (err, user) {
+        expect(user._id.toString()).to.have.length(24);
+        expect(user.role).to.be.eql("admin");
         done();
       });
     });
@@ -202,6 +215,20 @@ describe("User",  function () {
         }, function (err, user) {
           expect(err.message).to.be.equal("User not found.");
           expect(err.status).to.be.equal(404);
+          done();
+        });
+      });
+    });
+  });
+
+  describe(".remove", function () {
+    it("deletes user", function (done) {
+      new User({
+        email: "sam@test.com",
+        password: "password"
+      }).register(function (err, user) {
+        user.remove(function (err, count) {
+          expect(count).to.be.eql(1);
           done();
         });
       });

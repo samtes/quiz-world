@@ -25,7 +25,8 @@ describe("users route", function(){
 
       new User({
         email: "zoo@test.com",
-        password: "Password1"
+        password: "Password1",
+        role: "admin"
       }).register(function (err, user) {
         expect(user._id.toString()).to.have.length(24);
         done();
@@ -34,11 +35,32 @@ describe("users route", function(){
   });
 
   describe("GET /users", function () {
-    it("should return all users", function (done) {
+    it("should not return users", function (done) {
       request(app)
       .post("/login")
       .send({
         "email": "foo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .get("/users")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .expect(401, done);
+      });
+    });
+
+    it("should return all users", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
         "password": "Password1",
         "session": "session"
       })
@@ -259,6 +281,85 @@ describe("users route", function(){
         .end(function (err, res) {
           expect(res.status).to.equal(400);
           expect(res.body.message).to.equal("Invalid request.");
+          done();
+        });
+      });
+    });
+  });
+
+  describe("DELETE /users/:id", function () {
+    it("should not delete user", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .delete("/users")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({"email": "zoo@test.com"})
+        .end(function (err, res) {
+          expect(res.status).to.equal(401);
+          expect(res.body.message).to.equal("User not authorized.");
+          done();
+        });
+      });
+    });
+
+    it("should return 400 with no email", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .delete("/users")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal("Invalid request.");
+          done();
+        });
+      });
+    });
+
+    it("should return 400 with no email", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .delete("/users")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({"email": "foo@test.com"})
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.message).to.equal("User successfully deleted.");
           done();
         });
       });
