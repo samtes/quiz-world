@@ -5,7 +5,7 @@ var fs = require("fs");
 var exec = require("child_process").exec;
 var app = require("../../lib/app");
 var expect = require("chai").expect;
-var User, id, initMongo, token, cookie;
+var User, id, initMongo, token, cookie, id2;
 
 describe("users route", function(){
   before(function (done) {
@@ -21,6 +21,7 @@ describe("users route", function(){
       email: "foo@test.com",
       password: "Password1"
     }).register(function (err, user) {
+      id = user._id.toString();
       expect(user._id.toString()).to.have.length(24);
 
       new User({
@@ -28,6 +29,7 @@ describe("users route", function(){
         password: "Password1",
         role: "admin"
       }).register(function (err, user) {
+        id2 = user._id.toString();
         expect(user._id.toString()).to.have.length(24);
         done();
       });
@@ -79,6 +81,27 @@ describe("users route", function(){
   });
 
   describe("GET /users/:id", function () {
+    it("should return 401", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .get("/users/".concat(id2))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .expect(401, done);
+      });
+    });
+
     it("should return user", function (done) {
       request(app)
       .post("/login")
@@ -100,32 +123,10 @@ describe("users route", function(){
         .expect(200, done);
       });
     });
-
-    it("should return 404", function (done) {
-      request(app)
-      .post("/login")
-      .send({
-        "email": "foo@test.com",
-        "password": "Password1",
-        "session": "session"
-      })
-      .end(function (err, res) {
-        id = res.body.userID;
-        token = res.body.token;
-        cookie = res.headers["set-cookie"];
-        expect(res.status).to.equal(200);
-
-        request(app)
-        .get("/users/".concat("123412341234"))
-        .set("cookie", cookie)
-        .set("session-id", token)
-        .expect(404, done);
-      });
-    });
   });
 
   describe("PUT /users/:id", function () {
-    it("should update users", function (done) {
+    it("user should update user", function (done) {
       request(app)
       .post("/login")
       .send({
@@ -141,6 +142,58 @@ describe("users route", function(){
 
         request(app)
         .put("/users/".concat(id))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({"email": "foof@test.com"})
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.message).to.equal("User successfully updated.");
+          done();
+        });
+      });
+    });
+
+    it("admin should update users", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .put("/users/".concat(id))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({"email": "foof@test.com"})
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.message).to.equal("User successfully updated.");
+          done();
+        });
+      });
+    });
+
+    it("admin should update self", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .put("/users/".concat(id2))
         .set("cookie", cookie)
         .set("session-id", token)
         .send({"email": "foof@test.com"})
@@ -285,6 +338,33 @@ describe("users route", function(){
         });
       });
     });
+
+    it("should return 401", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        id = res.body.userID;
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .put("/users/".concat(id2))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({"email": "jimmy@test.com"})
+        .end(function (err, res) {
+          expect(res.status).to.equal(401);
+          expect(res.body.message).to.equal("User not authorized.");
+          done();
+        });
+      });
+    });
   });
 
   describe("DELETE /users/:id", function () {
@@ -339,7 +419,33 @@ describe("users route", function(){
       });
     });
 
-    it("should return 400 with no email", function (done) {
+    it("should return 404", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .delete("/users")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({"email": "fooob@test.com"})
+        .end(function (err, res) {
+          expect(res.status).to.equal(404);
+          expect(res.body.message).to.equal("User not found.");
+          done();
+        });
+      });
+    });
+
+    it("should delete user", function (done) {
       request(app)
       .post("/login")
       .send({
