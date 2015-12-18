@@ -80,7 +80,7 @@ describe("User",  function () {
       });
     });
 
-    it("finds user by id", function (done) {
+    it("returns 404 for wrong id", function (done) {
       User.findById("123456789123", function (err, user) {
         expect(err.message).to.be.equal("User not found.");
         expect(err.status).to.be.equal(404);
