@@ -1,2 +1,133 @@
 # quiz-world
-Platform that allows organizations to give tests to their resources with customized contents. 
+This project provides service endpoints for a quiz-world frontend application. This will be providing all the needed APIs for the client side consumption. All the available endpoints will be availabe to authenticated requests and will not be availabe to anyone. 
+
+##APIs
+###Registration 
+
+```
+Request: POST /register 
+Paylod: {
+  email: "user_email@email.com",
+  password: "Password1",
+  confirmPassword: "Password1"
+}
+
+Response:
+{
+  token: "token_string_for_authenticated_request",
+  userID: "user_id_string"
+}
+```
+
+###Login 
+
+```
+Request: POST /login 
+Paylod: {
+  email: "user_email@email.com",
+  password: "Password1",
+  session: "session_key"
+}
+
+Response:
+{
+  token: "token_string_for_authenticated_request",
+  userID: "user_id_string"
+}
+```
+
+###Logout 
+
+```
+Request: DELETE /login 
+
+Response:
+200
+```
+
+###Users 
+
+```
+*User has to be an Admin for this request
+
+Request: GET /users
+headers: {
+  session-id: "token_string_for_authenticated_request"
+}
+
+Response:
+[
+  {
+    "_id": "5673b48811d8971f00648269"
+    "email": "sam@test.com"
+    "password": "$2a$08$N1HrGqqF19IrJLZ5VxpLteCHyqa9gyFmJZkKhf1twFccJqlMxYpNW"
+    "updatedAt": "2015-12-18T07:23:50.882Z"
+    "createdAt": "2015-12-18T07:23:50.882Z"
+    "role": "admin"
+  },
+  {
+    "_id": "5673b55611d8971f0064826b"
+    "email": "jim@test.com"
+    "password": "$2a$08$60WjY1GCIZAv60dbOs7uPOsGUJKopBRzpMyKIPcRXp0fNUYX0y6HG"
+    "updatedAt": "2015-12-18T07:27:18.377Z"
+    "createdAt": "2015-12-18T07:27:18.377Z"
+    "role": "user"
+  },
+  {
+    "_id": "5673b56511d8971f0064826c"
+    "email": "ron@test.com"
+    "password": "$2a$08$HNS9nCLKcWrmCfK5/pstSubKD1hxJFumhuVRknZ73.b1FIF0.DUXm"
+    "updatedAt": "2015-12-18T07:27:32.939Z"
+    "createdAt": "2015-12-18T07:27:32.939Z"
+    "role": "user"
+  }
+]
+```
+###User
+
+```
+*User has to be an Admin or Self for this request
+
+Request: GET /users/5673b48811d8971f00648269
+headers: {
+  session-id: "token_string_for_authenticated_request"
+}
+
+Response:
+{
+  "_id": "5673b48811d8971f00648269"
+  "email": "sam@test.com"
+  "password": "$2a$08$N1HrGqqF19IrJLZ5VxpLteCHyqa9gyFmJZkKhf1twFccJqlMxYpNW"
+  "updatedAt": "2015-12-18T07:23:50.882Z"
+  "createdAt": "2015-12-18T07:23:50.882Z"
+  "role": "admin"
+}
+
+Request: PUT /users/5673b48811d8971f00648269
+headers: {
+  session-id: "token_string_for_authenticated_request"
+}
+Paylod: *requires at least one value to be updated
+{
+  email: "the_new_email@test.com",
+  password: "The_new_password1"
+}
+
+Response:
+{
+  message: "User successfully updated."
+}
+
+*User has to be an Admin for this request
+
+Request: DELETE /users/5673b48811d8971f00648269
+headers: {
+  session-id: "token_string_for_authenticated_request"
+}
+
+
+Response:
+{
+  message: "User successfully deleted."
+}
+```
