@@ -13,10 +13,16 @@ Paylod: {
 }
 
 Response:
+Successful: 201
 {
   token: "token_string_for_authenticated_request",
   userID: "user_id_string"
 }
+
+Unsuccessful: 
+400 Bad request => Issue with payload (Email and password validation errors and mismatch passwords ...)
+422 User already exists => Duplicate email
+
 ```
 
 ###Login 
@@ -30,10 +36,15 @@ Paylod: {
 }
 
 Response:
+Successful: 200
 {
   token: "token_string_for_authenticated_request",
   userID: "user_id_string"
 }
+
+Unsuccessful:
+400 Bad request => Issue with payload (Email and password validation errors)
+404 User not found => Email and passwords don't match
 ```
 
 ###Logout 
@@ -56,6 +67,7 @@ headers: {
 }
 
 Response:
+Successful: 200
 [
   {
     "_id": "5673b48811d8971f00648269"
@@ -82,6 +94,9 @@ Response:
     "role": "user"
   }
 ]
+
+Unsuccessful: 
+401 User not authorized => User with unauthanticated session or with out the proper role/right
 ```
 ###User
 
@@ -94,6 +109,7 @@ headers: {
 }
 
 Response:
+Successful: 200
 {
   "_id": "5673b48811d8971f00648269"
   "email": "sam@test.com"
@@ -102,6 +118,8 @@ Response:
   "createdAt": "2015-12-18T07:23:50.882Z"
   "role": "admin"
 }
+Unsuccessful: 
+401 User not authorized => User with unauthanticated session or with out the proper role/right
 
 Request: PUT /users/5673b48811d8971f00648269
 headers: {
@@ -114,9 +132,16 @@ Paylod: *requires at least one value to be updated
 }
 
 Response:
+Successful: 201
 {
   message: "User successfully updated."
 }
+
+Unsuccessful:
+401 User not authorized => User with unauthanticated session or with out the proper role/right
+404 User not found => User is not found
+400 Bad request => Invalid email or password
+422 Not created => Email is alreay taken
 
 *User has to be an Admin for this request
 
@@ -127,7 +152,12 @@ headers: {
 
 
 Response:
+Successful: 201
 {
   message: "User successfully deleted."
 }
+
+Unsuccessful:
+400 Invalid request => email is missing from payload 
+404 Not found => User is not found
 ```
