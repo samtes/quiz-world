@@ -173,7 +173,7 @@ describe("Question",  function () {
     });
   });
 
-  describe(".remove", function () {
+  describe(".removeById", function () {
     it("deletes question", function (done) {
       new Question({
         question: "Which one is a CSS selector?",
@@ -181,7 +181,7 @@ describe("Question",  function () {
         difficulty: 1,
         type: "css"
       }).insert(function (err, question) {
-        question.remove(function (err, count) {
+        Question.removeById(question._id, function (err, count) {
           expect(count).to.be.eql(1);
           done();
         });
