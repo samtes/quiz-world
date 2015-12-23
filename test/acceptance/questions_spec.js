@@ -100,7 +100,11 @@ describe("questions route", function(){
           options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
           difficulty: 1
         })
-        .expect(400, done);
+        .end(function (err, res) {
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal("Invalid request.");
+          done();
+        });
       });
     });
 
@@ -126,7 +130,11 @@ describe("questions route", function(){
           options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
           type: "css"
         })
-        .expect(400, done);
+        .end(function (err, res) {
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal("Invalid request.");
+          done();
+        });
       });
     });
 
@@ -152,7 +160,11 @@ describe("questions route", function(){
           difficulty: 1,
           type: "css"
         })
-        .expect(400, done);
+        .end(function (err, res) {
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal("Invalid request.");
+          done();
+        });
       });
     });
 
@@ -179,7 +191,11 @@ describe("questions route", function(){
           difficulty: 1,
           type: "css"
         })
-        .expect(400, done);
+        .end(function (err, res) {
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal("Invalid request.");
+          done();
+        });
       });
     });
 
@@ -205,7 +221,11 @@ describe("questions route", function(){
           difficulty: 1,
           type: "css"
         })
-        .expect(400, done);
+        .end(function (err, res) {
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal("Invalid request.");
+          done();
+        });
       });
     });
 
@@ -253,7 +273,231 @@ describe("questions route", function(){
           difficulty: 1,
           type: "css"
         })
-        .expect(201, done);
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.message).to.equal("Question successfully added.");
+          done();
+        });
+      });
+    });
+  });
+
+  describe("POST /questions/bulk", function () {
+    it("should return 400 missing body", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions/bulk")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal("Invalid request.");
+          done();
+        });
+      });
+    });
+
+    it("should return 401", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions/bulk")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+          expect(res.status).to.equal(401);
+          expect(res.body.message).to.equal("User not authorized.");
+          done();
+        });
+      });
+    });
+
+    it("should add bulk questions", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions/bulk")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          questions: [
+            {
+              question: "This is the new first question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "html"
+            },
+            {
+              question: "This is the new second question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "css"
+            },
+            {
+              question: "This is the new third question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "js"
+            },
+            {
+              question: "This is the new question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "qa"
+            }
+          ]
+        })
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.success.message).to.equal("Questions successfully added.");
+          done();
+        });
+      });
+    });
+
+    it("should not add one out of bulk questions", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions/bulk")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          questions: [
+            {
+              question: "This is the new first question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "html"
+            },
+            {
+              question: "This is the new second question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "css"
+            },
+            {
+              question: "This is the new third question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "js"
+            },
+            {
+              question: "This is the new question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id."}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "qa"
+            }
+          ]
+        })
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.success.message).to.equal("Questions successfully added.");
+          expect(res.body.faliure.message).to.equal("Invalid format in paylod.");
+          expect(res.body.faliure.questions[0]).to.deep.equal({
+            question: "This is the new question?",
+            options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id."}, {option: "Event handler."}],
+            difficulty: 1,
+            type: "qa"
+          });
+          done();
+        });
+      });
+    });
+
+    it("should not add one out of bulk questions", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions/bulk")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          questions: [
+            {
+              question: "This is the new first question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "html"
+            },
+            {
+              question: "This is the new second question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}],
+              difficulty: 1,
+              type: "css"
+            },
+            {
+              question: "This is the new third question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "js"
+            },
+            {
+              question: "This is the new question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id."}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "qa"
+            }
+          ]
+        })
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.success.message).to.equal("Questions successfully added.");
+          expect(res.body.faliure.message).to.equal("Invalid format in paylod.");
+          expect(res.body.faliure.questions.length).to.equal(2);
+          done();
+        });
       });
     });
   });
@@ -324,6 +568,32 @@ describe("questions route", function(){
         .end(function (err, res) {
           expect(res.status).to.equal(401);
           expect(res.body.message).to.equal("User not authorized.");
+          done();
+        });
+      });
+    });
+
+    it("should return 404", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .put("/questions/".concat("123412341234"))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({"question": "This is the new question"})
+        .end(function (err, res) {
+          expect(res.status).to.equal(404);
+          expect(res.body.message).to.equal("Question not found.");
           done();
         });
       });
