@@ -56,6 +56,208 @@ describe("questions route", function(){
     });
   });
 
+  describe("POST /questions", function () {
+    it("should return 400 missing body", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .expect(400, done);
+      });
+    });
+
+    it("should return 400 missing css", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          question: "This is the new question?",
+          options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+          difficulty: 1
+        })
+        .expect(400, done);
+      });
+    });
+
+    it("should return 400 missing difficulty", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          question: "This is the new question?",
+          options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+          type: "css"
+        })
+        .expect(400, done);
+      });
+    });
+
+    it("should return 400 missing options", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          question: "This is the new question?",
+          difficulty: 1,
+          type: "css"
+        })
+        .expect(400, done);
+      });
+    });
+
+    it("should return 400 missing options correct answer", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          question: "This is the new question?",
+          options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id."}, {option: "Event handler."}],
+          difficulty: 1,
+          type: "css"
+        })
+        .expect(400, done);
+      });
+    });
+
+    it("should return 400 missing question", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+          difficulty: 1,
+          type: "css"
+        })
+        .expect(400, done);
+      });
+    });
+
+    it("should return 401", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .expect(401, done);
+      });
+    });
+
+    it("should insert a question", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "zoo@test.com",
+        "password": "Password1",
+        "session": "session"
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .post("/questions")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          question: "This is the new question?",
+          options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+          difficulty: 1,
+          type: "css"
+        })
+        .expect(201, done);
+      });
+    });
+  });
+
   describe("GET /questions/:id", function () {
     it("should not return a question", function (done) {
       request(app)
