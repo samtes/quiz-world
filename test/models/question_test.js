@@ -49,7 +49,7 @@ describe("Question",  function () {
       var questions = data.bulkQuestions;
 
       Question.bulkInsert(questions, function (err, quests) {
-        expect(quests.length).to.be.eql(14);
+        expect(quests.length).to.be.eql(182);
         done();
       });
     });
@@ -97,7 +97,7 @@ describe("Question",  function () {
 
       Question.bulkInsert(questions, function (err, quests) {
         Question.getCustomQuestions({ type: "css" }, 50, function (err, quests) {
-          expect(quests.length).to.be.eql(6);
+          expect(quests.length).to.be.eql(50);
           expect(quests[0].type).to.be.eql("css");
           done();
         });
@@ -146,7 +146,7 @@ describe("Question",  function () {
         Question.getCustomQuestions({ difficulty: 3,
           $or: [{ type: "css" }, { type: "html" }, { type: "js" }]
         }, 40, function (err, quests) {
-          expect(quests.length).to.be.eql(3);
+          expect(quests.length).to.be.eql(39);
           done();
         });
       });
