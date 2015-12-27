@@ -12,7 +12,6 @@ gulp.task("mocha", function () {
           useColors: true,
           useInlineDiffs: true
          }))
-        .pipe(exit());
 });
 
 gulp.task("watch-mocha", function () {
