@@ -44,6 +44,28 @@ describe("Question",  function () {
     });
   });
 
+  describe(".total", function () {
+    it("returns total", function (done) {
+      var questions = data.bulkQuestions;
+
+      Question.bulkInsert(questions, function (err, quests) {
+        Question.total(function (err, total) {
+          expect(total).to.be.eql(182);
+          done();
+        });
+      });
+    });
+
+    it("returns zero", function (done) {
+      var questions = data.bulkQuestions;
+
+      Question.total(function (err, total) {
+        expect(total).to.be.eql(0);
+        done();
+      });
+    });
+  });
+
   describe(".bulkInsert", function () {
     it("Inserts multiple questions", function (done) {
       var questions = data.bulkQuestions;
