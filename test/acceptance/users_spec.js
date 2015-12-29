@@ -5,11 +5,12 @@ var fs = require("fs");
 var exec = require("child_process").exec;
 var app = require("../../lib/app");
 var expect = require("chai").expect;
-var User, id, initMongo, token, cookie, id2;
+var User, Session, sessionId, id, initMongo, token, cookie, id2;
 
 describe("users route", function(){
   before(function (done) {
     User = require("../../lib/models/user");
+    Session = require("../../lib/models/session");
     initMongo = require("../../lib/server/init-mongo");
     done();
   });
@@ -24,15 +25,30 @@ describe("users route", function(){
       id = user._id.toString();
       expect(user._id.toString()).to.have.length(24);
 
-      new User({
-        email: "zoo@test.com",
-        password: "Password1",
-        role: "admin"
-      }).register(function (err, user) {
-        id2 = user._id.toString();
-        expect(user._id.toString()).to.have.length(24);
-        done();
+      new Session({
+        quantity: 8,
+        difficulty: 1,
+        type: ["css","html"],
+        questions: ["123412341230", "123412341231", "123412341232", "123412341233", "123412341234", "123412341235", "123412341236", "123412341237"]
+      }).insert(function (err, session) {
+        sessionId = session._id.toString();
+        expect(session._id.toString()).to.have.length(24);
+
+        session.update({userId: user._id.toString()}, function (err, count) {
+          expect(count).to.be.eql(1);
+
+          new User({
+            email: "admin@admin.com",
+            password: "Password1",
+            role: "admin"
+          }).register(function (err, user) {
+            id2 = user._id.toString();
+            expect(user._id.toString()).to.have.length(24);
+            done();
+          });
+        });
       });
+
     });
   });
 
@@ -43,7 +59,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -62,7 +78,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -87,7 +103,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -108,7 +124,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -132,7 +148,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -157,7 +173,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -183,7 +199,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -211,7 +227,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -223,7 +239,7 @@ describe("users route", function(){
         .put("/users/".concat(id))
         .set("cookie", cookie)
         .set("session-id", token)
-        .send({"email": "zoo@test.com"})
+        .send({"email": "admin@admin.com"})
         .end(function (err, res) {
           expect(res.status).to.equal(422);
           expect(res.body.message).to.equal("Email already taken.");
@@ -238,7 +254,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -265,7 +281,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -292,7 +308,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -319,7 +335,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -345,7 +361,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -374,7 +390,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -385,7 +401,7 @@ describe("users route", function(){
         .delete("/users")
         .set("cookie", cookie)
         .set("session-id", token)
-        .send({"email": "zoo@test.com"})
+        .send({"email": "admin@admin.com"})
         .end(function (err, res) {
           expect(res.status).to.equal(401);
           expect(res.body.message).to.equal("User not authorized.");
@@ -398,7 +414,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -423,7 +439,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -449,7 +465,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })

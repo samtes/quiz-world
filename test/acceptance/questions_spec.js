@@ -5,11 +5,12 @@ var fs = require("fs");
 var exec = require("child_process").exec;
 var app = require("../../lib/app");
 var expect = require("chai").expect;
-var User, Question, id, initMongo, token, cookie, id2;
+var User, Session, Question, id, sessionId, initMongo, token, cookie, id2;
 
 describe("questions route", function(){
   before(function (done) {
     User = require("../../lib/models/user");
+    Session = require("../../lib/models/session");
     Question = require("../../lib/models/question");
     initMongo = require("../../lib/server/init-mongo");
     done();
@@ -25,33 +26,53 @@ describe("questions route", function(){
     }).register(function (err, user) {
       expect(user._id.toString()).to.have.length(24);
 
-      new User({
-        email: "zoo@test.com",
-        password: "Password1",
-        role: "admin"
-      }).register(function (err, user) {
-        expect(user._id.toString()).to.have.length(24);
+      new Session({
+        quantity: 8,
+        difficulty: 1,
+        type: ["css","html"],
+        questions: ["123412341230", "123412341231", "123412341232", "123412341233", "123412341234", "123412341235", "123412341236", "123412341237"]
+      }).insert(function (err, session) {
+        sessionId = session._id.toString();
+        expect(session._id.toString()).to.have.length(24);
 
-        new Question({
-          question: "This is the first question?",
-          options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
-          difficulty: 1,
-          type: "css"
-        }).insert(function (err, question) {
-          id = question._id.toString();
-          expect(question._id.toString()).to.have.length(24);
+        session.update({userId: user._id.toString()}, function (err, count) {
+          expect(count).to.be.eql(1);
 
-          new Question({
-            question: "This is the second question?",
-            options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
-            difficulty: 1,
-            type: "css"
-          }).insert(function (err, question) {
-            id2 = question._id.toString();
-            expect(question._id.toString()).to.have.length(24);
-            done();
+          new User({
+            email: "admin@admin.com",
+            password: "Password1",
+            role: "admin"
+          }).register(function (err, user) {
+            expect(user._id.toString()).to.have.length(24);
+
+            new Question({
+              question: "This is the first question?",
+              options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+              difficulty: 1,
+              type: "css"
+            }).insert(function (err, question) {
+              id = question._id.toString();
+              expect(question._id.toString()).to.have.length(24);
+
+              new Question({
+                question: "This is the second question?",
+                options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+                difficulty: 1,
+                type: "css"
+              }).insert(function (err, question) {
+                id2 = question._id.toString();
+                expect(question._id.toString()).to.have.length(24);
+                done();
+
+                new Session({
+                  quantity: 2
+                }).insert(function (err, session) {
+
+                });
+              });
+            })
           });
-        })
+        });
       });
     });
   });
@@ -61,7 +82,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -82,7 +103,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -112,7 +133,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -142,7 +163,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -172,7 +193,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -203,7 +224,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -235,7 +256,7 @@ describe("questions route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -254,7 +275,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -287,7 +308,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -314,7 +335,7 @@ describe("questions route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -337,7 +358,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -390,7 +411,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -450,7 +471,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -509,7 +530,7 @@ describe("questions route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -528,7 +549,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -553,7 +574,7 @@ describe("questions route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -577,7 +598,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -603,7 +624,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -628,7 +649,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -658,7 +679,7 @@ describe("questions route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": "session"
+        "session": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -681,7 +702,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -707,7 +728,7 @@ describe("questions route", function(){
     request(app)
     .post("/login")
     .send({
-      "email": "zoo@test.com",
+      "email": "admin@admin.com",
       "password": "Password1",
       "session": "session"
     })
