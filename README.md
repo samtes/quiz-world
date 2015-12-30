@@ -288,3 +288,76 @@ Unsuccessful:
 401 User not authorized => User with unauthanticated session or with out the proper role/right
 400 Bad request => Missing payload
 ```
+###Sessions
+
+```
+*User has to be an Admin for this request
+
+Request: POST /sessions
+headers: {
+  session-id: "token_string_for_authenticated_request"
+}
+Payload:
+{
+  quantity: 20,
+  difficulty: 2,
+  type: ["html", "css", "js"]
+}
+
+Response:
+Successful: 201
+{
+  session: "the_actual_session_created"
+}
+
+Unsuccessful:
+401 User not authorized => User with unauthanticated session or with out the proper role/right
+400 Bad request => Missing payload
+422 Not enough questions => When the number of questions are more thatn the questions in the database
+
+*User has to be an Admin for this request
+
+Request: GET /sessions
+headers: {
+  session-id: "token_string_for_authenticated_request"
+}
+
+Response:
+Successful: 200
+{
+  sessions: [all the sessions]
+}
+
+Unsuccessful:
+401 User not authorized => User with unauthanticated session or with out the proper role/right
+
+Request: GET /sessions/5673b48811d8971f00648269
+headers: {
+  session-id: "token_string_for_authenticated_request"
+}
+
+Response:
+Successful: 201
+{
+  session: {session_object}
+}
+
+Unsuccessful:
+401 User not authorized => User with unauthanticated session or with out the proper role/right
+404 Session not found => SessionId is not found in the database
+
+Request: DELETE /sessions/5673b48811d8971f00648269
+headers: {
+  session-id: "token_string_for_authenticated_request"
+}
+
+Response:
+Successful: 201
+{
+  message: "Session successfully deleted."
+}
+
+Unsuccessful:
+401 Not authorized => Unauthorised user
+422 Not processed => Request not processed when id can't be found in the databse
+```
