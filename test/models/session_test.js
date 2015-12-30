@@ -45,6 +45,38 @@ describe("Session",  function () {
     });
   });
 
+  describe("#findAll", function () {
+    it("returns all sessions", function (done) {
+      new Session({
+        quantity: 8,
+        difficulty: 1,
+        type: ["css","html"],
+      }).insert(function (err, session) {
+        expect(session._id.toString()).to.have.length(24);
+
+        new Session({
+          quantity: 4,
+          difficulty: 1,
+          type: ["css","html"],
+        }).insert(function (err, session) {
+          expect(session._id.toString()).to.have.length(24);
+
+          Session.findAll(function (err, sessions) {
+            expect(sessions.length).to.be.eql(2);
+            done();
+          });
+        });
+      });
+    });
+
+    it("returns empty array", function (done) {
+      Session.findAll(function (err, sessions) {
+        expect(sessions.length).to.be.eql(0);
+        done();
+      });
+    });
+  });
+
   describe(".findById", function () {
     it("returns 404", function (done) {
       Session.findById("123456789012", function (err, session) {

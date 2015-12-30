@@ -8,78 +8,82 @@ describe("Validate",  function () {
   });
 
   describe("passwordMatch", function () {
-    it("returns true", function (done) {
+    it("returns true", function () {
       var isValid = validate.passwordMatch("password", "password");
 
       expect(isValid).to.be.true;
-      done();
     });
 
-    it("returns false", function (done) {
+    it("returns false", function () {
       var isValid = validate.passwordMatch("password1", "password");
 
       expect(isValid).to.be.false;
-      done();
     });
   });
 
   describe("validateEmail", function () {
-    it("returns true", function (done) {
+    it("returns true", function () {
       var isValid = validate.validateEmail("sam@test.com");
 
       expect(isValid).to.be.true;
-      done();
     });
 
-    it("returns false for '@' missing", function (done) {
+    it("returns false for '@' missing", function () {
       var isValid = validate.validateEmail("samtest.com");
 
       expect(isValid).to.be.false;
-      done();
     });
 
-    it("returns false for '.' missing", function (done) {
+    it("returns false for '.' missing", function () {
       var isValid = validate.validateEmail("sam@testcom");
 
       expect(isValid).to.be.false;
-      done();
     });
   });
 
   describe("verifyPassword", function () {
-    it("returns true", function (done) {
+    it("returns true", function () {
       var isValid = validate.verifyPassword("Password1");
 
       expect(isValid).to.be.true;
-      done();
     });
 
-    it("returns false for less than 6 characters", function (done) {
+    it("returns false for less than 6 characters", function () {
       var isValid = validate.verifyPassword("passwor");
 
       expect(isValid).to.be.false;
-      done();
     });
 
-    it("returns false for missing lowercase", function (done) {
+    it("returns false for missing lowercase", function () {
       var isValid = validate.verifyPassword("PASSWORD1");
 
       expect(isValid).to.be.false;
-      done();
     });
 
-    it("returns false for missing uppercase", function (done) {
+    it("returns false for missing uppercase", function () {
       var isValid = validate.verifyPassword("password1");
 
       expect(isValid).to.be.false;
-      done();
     });
 
-    it("returns false for missing number", function (done) {
+    it("returns false for missing number", function () {
       var isValid = validate.verifyPassword("password");
 
       expect(isValid).to.be.false;
-      done();
+    });
+  });
+
+  describe("verifyMongoId", function () {
+    it("returns false", function () {
+      var isMongoId = validate.verifyMongoId("not_a_mongoId");
+
+      expect(isMongoId).to.be.false;
+    });
+
+    it("returns true", function () {
+      var isMongoId = validate.verifyMongoId("1234ABCDabcd1234ABCDabcd");
+
+      expect(isMongoId).to.be.true;
     });
   });
 });

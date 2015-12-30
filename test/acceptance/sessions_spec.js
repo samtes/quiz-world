@@ -6,7 +6,8 @@ var exec = require("child_process").exec;
 var app = require("../../lib/app");
 var expect = require("chai").expect;
 var data = require("../fixtures/questions");
-var User, Question, Session, id, initMongo, token, cookie, id2;
+var _ = require("lodash");
+var User, Question, Session, sessionId, questionId, correctAnswer, wrongAnswer, id, initMongo, token, cookie, id2;
 
 describe("sessions route", function(){
   before(function (done) {
@@ -23,22 +24,218 @@ describe("sessions route", function(){
     initMongo.db.collection("sessions").drop();
 
     new User({
-      email: "foo@test.com",
-      password: "Password1"
-    }).register(function (err, user) {
-      expect(user._id.toString()).to.have.length(24);
+      email: "admin@admin.com",
+      password: "Password1",
+      role: "admin"
+    }).register(function (err, admin) {
+      expect(admin._id.toString()).to.have.length(24);
 
       new User({
-        email: "zoo@test.com",
-        password: "Password1",
-        role: "admin"
+        email: "foo@test.com",
+        password: "Password1"
       }).register(function (err, user) {
         expect(user._id.toString()).to.have.length(24);
 
         Question.bulkInsert(data.bulkQuestions, function (err, questions) {
+          questionId = questions[0]._id.toString();
+          correctAnswer = _.pluck(_.filter(questions[0].options, "correct"), "option")[0];
+          wrongAnswer = _.pluck(_.filter(questions[0].options), "option")[0];
           expect(questions).to.have.length(182);
-          done();
+
+          new Session({
+            quantity: 20,
+            difficulty: 2,
+            type: ["html", "css", "js"]
+          }).insert(function (err, session) {
+            sessionId = session._id.toString();
+            expect(session._id.toString()).to.have.length(24);
+
+            session.update({userId: user._id.toString()}, function (err, count) {
+              expect(count).to.be.eql(1);
+              done();
+            });
+          });
         })
+      });
+    });
+  });
+
+  describe("GET /sessions", function () {
+    it("should return not authorized", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .get("/sessions")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+          expect(res.status).to.equal(401);
+          expect(res.body.message).to.equal("User not authorized.");
+          done();
+        });
+      });
+    });
+
+    it("should return all sessions", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "admin@admin.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .get("/sessions")
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+
+          expect(res.status).to.equal(200);
+          done();
+        });
+      });
+    });
+  });
+
+  describe("GET /sessions/:id", function () {
+    it("should return not authorized", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .get("/sessions/".concat(sessionId))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+          expect(res.status).to.equal(401);
+          expect(res.body.message).to.equal("User not authorized.");
+          done();
+        });
+      });
+    });
+
+    it("should return a session", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "admin@admin.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .get("/sessions/".concat(sessionId))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+
+          expect(res.status).to.equal(200);
+          done();
+        });
+      });
+    });
+
+    it("should return a session", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "admin@admin.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .get("/sessions/".concat("1234ABCDabcd1234ABCDabcd"))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+          expect(res.status).to.equal(404);
+          done();
+        });
+      });
+    });
+  });
+
+  describe("delete /sessions/:id", function () {
+    it("should return not authorized", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .delete("/sessions/".concat(sessionId))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+          expect(res.status).to.equal(401);
+          expect(res.body.message).to.equal("User not authorized.");
+          done();
+        });
+      });
+    });
+
+    it("should delete a session", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "admin@admin.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .delete("/sessions/".concat(sessionId))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.message).to.equal("Session successfully deleted.");
+          done();
+        });
       });
     });
   });
@@ -48,7 +245,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -73,7 +270,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -102,7 +299,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -131,7 +328,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -160,7 +357,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -186,7 +383,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -212,7 +409,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "zoo@test.com",
+        "email": "admin@admin.com",
         "password": "Password1",
         "session": "session"
       })
@@ -233,6 +430,119 @@ describe("sessions route", function(){
         .end(function (err, res) {
           expect(res.status).to.equal(422);
           expect(res.body.message).to.equal("Not enough questions in database.");
+          done();
+        });
+      });
+    });
+  });
+
+  describe("PUT /sessions/:id", function () {
+    it("should require body", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .put("/sessions/".concat(sessionId))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .end(function (err, res) {
+          expect(res.status).to.equal(400);
+          expect(res.body.message).to.equal("Invalid request.");
+          done();
+        });
+      });
+    });
+
+    it("should update session as timed out", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .put("/sessions/".concat(sessionId))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          questionId: questionId
+        })
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.message).to.equal("Session successfully updated.");
+          done();
+        });
+      });
+    });
+
+    it("should update session for correct choice", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .put("/sessions/".concat(sessionId))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          questionId: questionId,
+          answer: correctAnswer
+        })
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.message).to.equal("Session successfully updated.");
+          done();
+        });
+      });
+    });
+
+    it("should update session for wrong choice", function (done) {
+      request(app)
+      .post("/login")
+      .send({
+        "email": "foo@test.com",
+        "password": "Password1",
+        "session": sessionId
+      })
+      .end(function (err, res) {
+        token = res.body.token;
+        cookie = res.headers["set-cookie"];
+        expect(res.status).to.equal(200);
+
+        request(app)
+        .put("/sessions/".concat(sessionId))
+        .set("cookie", cookie)
+        .set("session-id", token)
+        .send({
+          questionId: questionId,
+          answer: wrongAnswer
+        })
+        .end(function (err, res) {
+          expect(res.status).to.equal(201);
+          expect(res.body.message).to.equal("Session successfully updated.");
           done();
         });
       });
