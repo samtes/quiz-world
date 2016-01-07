@@ -57,7 +57,7 @@ describe("Authentication route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": ""
+        "key": ""
       })
       .end(function (err, res) {
         expect(res.status).to.equal(200);
@@ -71,7 +71,7 @@ describe("Authentication route", function(){
       .send({
         "email": "rob@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         expect(res.status).to.equal(200);
@@ -95,7 +95,7 @@ describe("Authentication route", function(){
       .send({
         "email": "jimmy@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         expect(res.status).to.equal(404);
@@ -110,7 +110,7 @@ describe("Authentication route", function(){
       .send({
         "email": "rob@test.com",
         "password": "Password123",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         expect(res.status).to.equal(404);
@@ -124,7 +124,7 @@ describe("Authentication route", function(){
       .post("/login")
       .send({
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         expect(res.status).to.equal(400);
@@ -138,7 +138,7 @@ describe("Authentication route", function(){
       .post("/login")
       .send({
         "email": "rob@test.com",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         expect(res.status).to.equal(400);
@@ -167,7 +167,7 @@ describe("Authentication route", function(){
       .send({
         "email": "rob@test.com",
         "password": "Password1",
-        "session": "invalid_session"
+        "key": "invalid_session"
       })
       .end(function (err, res) {
         expect(res.status).to.equal(400);

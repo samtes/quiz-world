@@ -84,7 +84,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -105,7 +105,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -135,7 +135,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -165,7 +165,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -195,7 +195,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -226,7 +226,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -256,7 +256,7 @@ describe("questions route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -277,7 +277,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -310,7 +310,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -335,7 +335,7 @@ describe("questions route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -360,7 +360,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -413,7 +413,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -473,7 +473,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -530,7 +530,7 @@ describe("questions route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -551,7 +551,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -574,7 +574,7 @@ describe("questions route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -600,7 +600,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -626,7 +626,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -651,7 +651,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -679,7 +679,7 @@ describe("questions route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -704,7 +704,7 @@ describe("questions route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -730,7 +730,7 @@ describe("questions route", function(){
     .send({
       "email": "admin@admin.com",
       "password": "Password1",
-      "session": "session"
+      "key": "session"
     })
     .end(function (err, res) {
       token = res.body.token;

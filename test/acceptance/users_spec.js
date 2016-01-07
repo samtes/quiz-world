@@ -52,6 +52,227 @@ describe("users route", function(){
     });
   });
 
+  describe("POST /users", function () {
+    it("should register user", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "bobby@test.com",
+          "password": "Password1",
+          "confirmPassword": "Password1",
+          "key": sessionId
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(201);
+
+        Session.findById(sessionId, function (err, session) {
+          User.findByEmail("bobby@test.com", function (err, user) {
+            expect(session.userId).to.be.eql(user._id.toString());
+            done();
+          });
+        });
+      });
+    });
+
+    it("should not register user with no body", function (done) {
+      request(app)
+      .post("/users")
+      .end(function (err, res) {
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal("Invalid request.");
+        done();
+      });
+    });
+
+    it("should not register user with no email", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "password": "Password1",
+          "confirmPassword": "Password1"
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal("Invalid request.");
+        done();
+      });
+    });
+
+    it("should not register user with no password", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "bobby@test.com",
+          "confirmPassword": "Password1"
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal("Invalid request.");
+        done();
+      });
+    });
+
+    it("should not register user with no confirmPassword", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "bobby@test.com",
+          "password": "Password1"
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal("Invalid request.");
+        done();
+      });
+    });
+
+    it("should not register without a session", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "samiboy@test.com",
+          "password": "Password1",
+          "confirmPassword": "Password1"
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(404);
+        expect(res.body.message).to.equal("Session not found.");
+        done();
+      });
+    });
+
+
+    it("should not register duplicate user", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "admin@admin.com",
+          "password": "Password1",
+          "confirmPassword": "Password1",
+          "key": sessionId
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(422);
+        expect(res.body.message).to.equal("User already exists.");
+        done();
+      });
+    });
+
+    it("should not register user with no number in password", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "bobby@test.com",
+          "password": "Password",
+          "confirmPassword": "Password"
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal("Invalid password.");
+        done();
+      });
+    });
+
+    it("should not register user with no uppercase in password", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "bobby@test.com",
+          "password": "password1",
+          "confirmPassword": "password1"
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal("Invalid password.");
+        done();
+      });
+    });
+
+    it("should not register user with no lowercase in password", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "bobby@test.com",
+          "password": "PASSWORD1",
+          "confirmPassword": "PASSWORD1"
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal("Invalid password.");
+        done();
+      });
+    });
+
+    it("should not register user with mismatch password", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "bobby@test.com",
+          "password": "Password1",
+          "confirmPassword": "Password"
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal("Password mismatch.");
+        done();
+      });
+    });
+
+    it("should not register user with invalid email missing \"@\"", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "bobbytest.com",
+          "password": "Password1",
+          "confirmPassword": "Password1"
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal("Invalid email.");
+        done();
+      });
+    });
+
+    it("should not register user with invalid email missing \".\"", function (done) {
+      request(app)
+      .post("/users")
+      .send({
+        "users": {
+          "email": "bobbytest.com",
+          "password": "Password1",
+          "confirmPassword": "Password1"
+        }
+      })
+      .end(function (err, res) {
+        expect(res.status).to.equal(400);
+        expect(res.body.message).to.equal("Invalid email.");
+        done();
+      });
+    });
+  });
+
   describe("GET /users", function () {
     it("should not return users", function (done) {
       request(app)
@@ -59,7 +280,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -80,7 +301,7 @@ describe("users route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -103,7 +324,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -124,7 +345,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -148,7 +369,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -175,7 +396,7 @@ describe("users route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -201,7 +422,7 @@ describe("users route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -227,7 +448,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -254,7 +475,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -281,7 +502,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -308,7 +529,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -335,7 +556,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -361,7 +582,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         id = res.body.userID;
@@ -390,7 +611,7 @@ describe("users route", function(){
       .send({
         "email": "foo@test.com",
         "password": "Password1",
-        "session": sessionId
+        "key": sessionId
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -416,7 +637,7 @@ describe("users route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -441,7 +662,7 @@ describe("users route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
@@ -467,7 +688,7 @@ describe("users route", function(){
       .send({
         "email": "admin@admin.com",
         "password": "Password1",
-        "session": "session"
+        "key": "session"
       })
       .end(function (err, res) {
         token = res.body.token;
