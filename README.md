@@ -5,22 +5,24 @@ This project provides service endpoints for a quiz-world frontend application. T
 ###Registration
 
 ```
-Request: POST /register
+Request: POST /users
 Paylod: {
   email: "user_email@email.com",
   password: "Password1",
-  confirmPassword: "Password1"
+  confirmPassword: "Password1",
+  key: "session_key"
 }
 
 Response:
 Successful: 201
 {
   token: "token_string_for_authenticated_request",
-  userID: "user_id_string"
+  userID: "user_id_string",
+  key: 'session_key'
 }
 
 Unsuccessful:
-400 Bad request => Issue with payload (Email and password validation errors and mismatch passwords ...)
+400 Bad request => Issue with payload (Email and password validation errors and mismatch passwords, invalid session ...)
 422 User already exists => Duplicate email
 
 ```
@@ -30,7 +32,7 @@ Unsuccessful:
 ```
 Request: POST /login
 Paylod: {
-  email: "user_email@email.com",
+  username: "user_email@email.com",
   password: "Password1",
   session: "session_key"
 }
@@ -232,6 +234,49 @@ Unsuccessful:
 ###Questions
 ```
 *User has to be an Admin for this request
+
+Request: GET /questions
+headers: {
+  session-id: "token_string_for_authenticated_request"
+}
+
+Response: 
+Successful: 200
+
+{ 
+  "questions": [
+    {
+      "_id": "5692dfb916aae91f0003b20c"
+      "question": "sample question"
+      "options": [
+        {"option": "sample option 1"},
+        {"option": "sample option 2"},
+        {"option": "sample option 3", "correct": true},
+        {"option": "sample option 4"}
+      ],
+      "difficulty": "1"
+      "time": 180
+      "type": "css"
+      "updatedAt": "2016-01-10T22:48:25.841Z"
+      "createdAt": "2016-01-10T22:48:25.841Z"
+  },
+  {
+    "_id": "5692dfb916aae91f0003b20c"
+    "question": "sample question"
+    "options": [
+      {"option": "sample option 1"},
+      {"option": "sample option 2"},
+      {"option": "sample option 3", "correct": true},
+      {"option": "sample option 4"}
+    ],
+    "difficulty": "1"
+    "time": 180
+    "type": "css"
+    "updatedAt": "2016-01-10T22:48:25.841Z"
+    "createdAt": "2016-01-10T22:48:25.841Z"
+  }
+]
+}
 
 Request: POST /questions/bulk
 headers: {
