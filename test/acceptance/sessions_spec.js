@@ -65,7 +65,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -75,7 +75,7 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .get("/sessions")
+        .get("/keys")
         .set("cookie", cookie)
         .set("session-id", token)
         .end(function (err, res) {
@@ -90,7 +90,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -100,7 +100,7 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .get("/sessions")
+        .get("/keys")
         .set("cookie", cookie)
         .set("session-id", token)
         .end(function (err, res) {
@@ -117,7 +117,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -127,7 +127,7 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .get("/sessions/".concat(sessionId))
+        .get("/keys/".concat(sessionId))
         .set("cookie", cookie)
         .set("session-id", token)
         .end(function (err, res) {
@@ -142,7 +142,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -152,7 +152,7 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .get("/sessions/".concat(sessionId))
+        .get("/keys/".concat(sessionId))
         .set("cookie", cookie)
         .set("session-id", token)
         .end(function (err, res) {
@@ -167,7 +167,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -177,7 +177,7 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .get("/sessions/".concat("1234ABCDabcd1234ABCDabcd"))
+        .get("/keys/".concat("1234ABCDabcd1234ABCDabcd"))
         .set("cookie", cookie)
         .set("session-id", token)
         .end(function (err, res) {
@@ -193,7 +193,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -203,7 +203,7 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .delete("/sessions/".concat(sessionId))
+        .delete("/keys/".concat(sessionId))
         .set("cookie", cookie)
         .set("session-id", token)
         .end(function (err, res) {
@@ -218,7 +218,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -228,7 +228,7 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .delete("/sessions/".concat(sessionId))
+        .delete("/keys/".concat(sessionId))
         .set("cookie", cookie)
         .set("session-id", token)
         .end(function (err, res) {
@@ -243,7 +243,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -253,7 +253,7 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .delete("/sessions/".concat("1234ABCDabcd1234ABCDabcd"))
+        .delete("/keys/".concat("1234ABCDabcd1234ABCDabcd"))
         .set("cookie", cookie)
         .set("session-id", token)
         .end(function (err, res) {
@@ -266,36 +266,11 @@ describe("sessions route", function(){
   });
 
   describe("POST /sessions", function () {
-    it("should return 400 missing body", function (done) {
-      request(app)
-      .post("/login")
-      .send({
-        "email": "admin@admin.com",
-        "password": "Password1",
-        "key": "session"
-      })
-      .end(function (err, res) {
-        token = res.body.token;
-        cookie = res.headers["set-cookie"];
-        expect(res.status).to.equal(200);
-
-        request(app)
-        .post("/sessions")
-        .set("cookie", cookie)
-        .set("session-id", token)
-        .end(function (err, res) {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal("Invalid request.");
-          done();
-        });
-      });
-    });
-
     it("should return 400 missing type of question", function (done) {
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -305,12 +280,14 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .post("/sessions")
+        .post("/keys")
         .set("cookie", cookie)
         .set("session-id", token)
         .send({
-          quantity: 20,
-          difficulty: 1
+          key: {
+            quantity: 20,
+            difficulty: 1
+          }
         })
         .end(function (err, res) {
           expect(res.status).to.equal(400);
@@ -324,7 +301,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -334,12 +311,14 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .post("/sessions")
+        .post("/keys")
         .set("cookie", cookie)
         .set("session-id", token)
         .send({
-          quantity: 20,
-          type: "html"
+          key: {
+            quantity: 20,
+            type: "html"
+          }
         })
         .end(function (err, res) {
           expect(res.status).to.equal(400);
@@ -353,7 +332,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -363,12 +342,14 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .post("/sessions")
+        .post("/keys")
         .set("cookie", cookie)
         .set("session-id", token)
         .send({
-          difficulty: 2,
-          type: "html"
+          key: {
+            difficulty: 2,
+            type: "html"
+          }
         })
         .end(function (err, res) {
           expect(res.status).to.equal(400);
@@ -382,7 +363,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -392,13 +373,15 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .post("/sessions")
+        .post("/keys")
         .set("cookie", cookie)
         .set("session-id", token)
         .send({
-          difficulty: 2,
-          quantity: 10,
-          type: "html"
+          key: {
+            difficulty: 2,
+            quantity: 10,
+            type: "html"
+          }
         })
         .expect(201, done);
       });
@@ -408,7 +391,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -418,13 +401,15 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .post("/sessions")
+        .post("/keys")
         .set("cookie", cookie)
         .set("session-id", token)
         .send({
-          difficulty: 2,
-          quantity: 10,
-          type: ["html", "css"]
+          key: {
+            difficulty: 2,
+            quantity: 10,
+            type: ["html", "css"]
+          }
         })
         .expect(201, done);
       });
@@ -434,7 +419,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -444,13 +429,15 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .post("/sessions")
+        .post("/keys")
         .set("cookie", cookie)
         .set("session-id", token)
         .send({
-          difficulty: 2,
-          quantity: 200,
-          type: ["html", "css"]
+          key: {
+            difficulty: 2,
+            quantity: 200,
+            type: ["html", "css"]
+          }
         })
         .end(function (err, res) {
           expect(res.status).to.equal(422);
@@ -462,36 +449,11 @@ describe("sessions route", function(){
   });
 
   describe("PUT /sessions/:id", function () {
-    it("should require body", function (done) {
-      request(app)
-      .post("/login")
-      .send({
-        "email": "foo@test.com",
-        "password": "Password1",
-        "key": sessionId
-      })
-      .end(function (err, res) {
-        token = res.body.token;
-        cookie = res.headers["set-cookie"];
-        expect(res.status).to.equal(200);
-
-        request(app)
-        .put("/sessions/".concat(sessionId))
-        .set("cookie", cookie)
-        .set("session-id", token)
-        .end(function (err, res) {
-          expect(res.status).to.equal(400);
-          expect(res.body.message).to.equal("Invalid request.");
-          done();
-        });
-      });
-    });
-
     it("should update session as timed out", function (done) {
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -501,11 +463,13 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .put("/sessions/".concat(sessionId))
+        .put("/keys/".concat(sessionId))
         .set("cookie", cookie)
         .set("session-id", token)
         .send({
-          questionId: questionId
+          key: {
+            questionId: questionId
+          }
         })
         .end(function (err, res) {
           expect(res.status).to.equal(201);
@@ -519,7 +483,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -529,12 +493,14 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .put("/sessions/".concat(sessionId))
+        .put("/keys/".concat(sessionId))
         .set("cookie", cookie)
         .set("session-id", token)
         .send({
-          questionId: questionId,
-          answer: correctAnswer
+          key: {
+            questionId: questionId,
+            answer: correctAnswer
+          }
         })
         .end(function (err, res) {
           expect(res.status).to.equal(201);
@@ -548,7 +514,7 @@ describe("sessions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -558,12 +524,14 @@ describe("sessions route", function(){
         expect(res.status).to.equal(200);
 
         request(app)
-        .put("/sessions/".concat(sessionId))
+        .put("/keys/".concat(sessionId))
         .set("cookie", cookie)
         .set("session-id", token)
         .send({
-          questionId: questionId,
-          answer: wrongAnswer
+          key: {
+            questionId: questionId,
+            answer: wrongAnswer
+          }
         })
         .end(function (err, res) {
           expect(res.status).to.equal(201);

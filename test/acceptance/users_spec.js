@@ -57,7 +57,7 @@ describe("users route", function(){
       request(app)
       .post("/users")
       .send({
-        "users": {
+        "user": {
           "email": "bobby@test.com",
           "password": "Password1",
           "confirmPassword": "Password1",
@@ -138,10 +138,11 @@ describe("users route", function(){
       request(app)
       .post("/users")
       .send({
-        "users": {
+        "user": {
           "email": "samiboy@test.com",
           "password": "Password1",
-          "confirmPassword": "Password1"
+          "confirmPassword": "Password1",
+          "key": "123412341234123412341234"
         }
       })
       .end(function (err, res) {
@@ -156,7 +157,7 @@ describe("users route", function(){
       request(app)
       .post("/users")
       .send({
-        "users": {
+        "user": {
           "email": "admin@admin.com",
           "password": "Password1",
           "confirmPassword": "Password1",
@@ -174,7 +175,7 @@ describe("users route", function(){
       request(app)
       .post("/users")
       .send({
-        "users": {
+        "user": {
           "email": "bobby@test.com",
           "password": "Password",
           "confirmPassword": "Password"
@@ -191,7 +192,7 @@ describe("users route", function(){
       request(app)
       .post("/users")
       .send({
-        "users": {
+        "user": {
           "email": "bobby@test.com",
           "password": "password1",
           "confirmPassword": "password1"
@@ -208,7 +209,7 @@ describe("users route", function(){
       request(app)
       .post("/users")
       .send({
-        "users": {
+        "user": {
           "email": "bobby@test.com",
           "password": "PASSWORD1",
           "confirmPassword": "PASSWORD1"
@@ -225,7 +226,7 @@ describe("users route", function(){
       request(app)
       .post("/users")
       .send({
-        "users": {
+        "user": {
           "email": "bobby@test.com",
           "password": "Password1",
           "confirmPassword": "Password"
@@ -242,7 +243,7 @@ describe("users route", function(){
       request(app)
       .post("/users")
       .send({
-        "users": {
+        "user": {
           "email": "bobbytest.com",
           "password": "Password1",
           "confirmPassword": "Password1"
@@ -259,7 +260,7 @@ describe("users route", function(){
       request(app)
       .post("/users")
       .send({
-        "users": {
+        "user": {
           "email": "bobbytest.com",
           "password": "Password1",
           "confirmPassword": "Password1"
@@ -278,7 +279,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -299,7 +300,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -322,7 +323,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -343,7 +344,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -367,7 +368,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -394,7 +395,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -420,7 +421,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -446,7 +447,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -473,7 +474,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -500,7 +501,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -527,7 +528,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -554,7 +555,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -580,7 +581,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -609,7 +610,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -635,7 +636,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -660,7 +661,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -686,7 +687,7 @@ describe("users route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })

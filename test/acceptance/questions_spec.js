@@ -82,7 +82,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -103,7 +103,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -133,7 +133,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -163,7 +163,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -193,7 +193,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -224,7 +224,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -254,7 +254,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -275,7 +275,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -289,10 +289,12 @@ describe("questions route", function(){
         .set("cookie", cookie)
         .set("session-id", token)
         .send({
-          question: "This is the new question?",
-          options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
-          difficulty: 1,
-          type: "css"
+          question: {
+            question: "This is the new question?",
+            options: [{option: "Color."}, {option: "DOM elements."}, {option: "Class or id.", correct: true}, {option: "Event handler."}],
+            difficulty: 1,
+            type: "css"
+          }
         })
         .end(function (err, res) {
           expect(res.status).to.equal(201);
@@ -308,7 +310,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -333,7 +335,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -358,7 +360,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -411,7 +413,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -471,7 +473,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -528,7 +530,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -549,7 +551,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -572,7 +574,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -598,7 +600,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -624,7 +626,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -649,7 +651,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -677,7 +679,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "foo@test.com",
+        "username": "foo@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -702,7 +704,7 @@ describe("questions route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": "session"
       })
@@ -728,7 +730,7 @@ describe("questions route", function(){
     request(app)
     .post("/login")
     .send({
-      "email": "admin@admin.com",
+      "username": "admin@admin.com",
       "password": "Password1",
       "key": "session"
     })

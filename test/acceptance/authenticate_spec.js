@@ -55,7 +55,7 @@ describe("Authentication route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "admin@admin.com",
+        "username": "admin@admin.com",
         "password": "Password1",
         "key": ""
       })
@@ -69,7 +69,7 @@ describe("Authentication route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "rob@test.com",
+        "username": "rob@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -93,7 +93,7 @@ describe("Authentication route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "jimmy@test.com",
+        "username": "jimmy@test.com",
         "password": "Password1",
         "key": sessionId
       })
@@ -108,7 +108,7 @@ describe("Authentication route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "rob@test.com",
+        "username": "rob@test.com",
         "password": "Password123",
         "key": sessionId
       })
@@ -137,7 +137,7 @@ describe("Authentication route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "rob@test.com",
+        "username": "rob@test.com",
         "key": sessionId
       })
       .end(function (err, res) {
@@ -151,7 +151,7 @@ describe("Authentication route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "rob@test.com",
+        "username": "rob@test.com",
         "password": "Password1"
       })
       .end(function (err, res) {
@@ -165,7 +165,7 @@ describe("Authentication route", function(){
       request(app)
       .post("/login")
       .send({
-        "email": "rob@test.com",
+        "username": "rob@test.com",
         "password": "Password1",
         "key": "invalid_session"
       })
